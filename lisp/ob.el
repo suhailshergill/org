@@ -285,15 +285,18 @@ of potentially harmful code."
   (let* ((eval (or (cdr (assoc :eval (nth 2 info)))
 		   (when (assoc :noeval (nth 2 info)) "no")))
          (query (cond ((equal eval "query") t)
-		      ((and org-current-export-file
+		      ((and (boundp 'org-current-export-file)
+			    org-current-export-file
 			    (equal eval "query-export")) t)
                       ((functionp org-confirm-babel-evaluate)
                        (funcall org-confirm-babel-evaluate
                                 (nth 0 info) (nth 1 info)))
                       (t org-confirm-babel-evaluate))))
     (if (or (equal eval "never") (equal eval "no")
-	    (and org-current-export-file (or (equal eval "no-export")
-					     (equal eval "never-export")))
+	    (and (boundp 'org-current-export-file)
+		 org-current-export-file
+		 (or (equal eval "no-export")
+		     (equal eval "never-export")))
 	    (and query
 		 (not (yes-or-no-p
 		       (format "Evaluate this%scode block%son your system? "
@@ -814,9 +817,9 @@ Return t if a code block was found at point, nil otherwise."
 (defun org-babel-do-key-sequence-in-edit-buffer (key)
   "Read key sequence and execute the command in edit buffer.
 Enter a key sequence to be executed in the language major-mode
-edit buffer. For example, TAB will alter the contents of the
+edit buffer.  For example, TAB will alter the contents of the
 Org-mode code block according to the effect of TAB in the
-language major-mode buffer. For languages that support
+language major-mode buffer.  For languages that support
 interactive sessions, this can be used to send code from the Org
 buffer to the session for evaluation using the native major-mode
 evaluation mechanisms."
